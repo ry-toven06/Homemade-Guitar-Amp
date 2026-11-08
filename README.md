@@ -7,7 +7,8 @@ Requires VNC or Screen of some kind to open.
     export DISPLAY=:0 && python3 amp.py
 
 Future Implementation Ideas:
-  Reverb
-  Delay
-  Reset Buttons
-  Text Editing (Numbers)
+  - Reverb
+  - Delay
+  - Reset Buttons
+  - Text Editing (Numbers)
+  - Hardware Accessibility for Each Slider (Pedals, Dials, Buttons, etc...)
