@@ -4,18 +4,14 @@ import numpy as np
 import alsaaudio
 from scipy.signal import lfilter
 
-# -----------------------------
-# AUDIO CONFIGURATION
-# -----------------------------
+# Audio Configuration
 
 DEVICE = "plughw:2,0"  # Scarlett Solo
 SAMPLE_RATE = 48000
 CHANNELS = 2
 BUFFER_SIZE = 256
 
-# -----------------------------
-# EQ FILTER DESIGN (RBJ biquad cookbook)
-# -----------------------------
+# EQ Filter Design (RBJ biquad cookbook)
 
 def _normalize(b0, b1, b2, a0, a1, a2):
     return (np.array([b0, b1, b2]) / a0, np.array([1.0, a1 / a0, a2 / a0]))
@@ -69,9 +65,7 @@ def highpass(f0, fs, q=0.7071):
         1 + alpha, -2 * cw, 1 - alpha,
     )
 
-# -----------------------------
-# DSP ENGINE
-# -----------------------------
+# DSP Engine
 
 class GuitarAmp:
 
@@ -188,9 +182,7 @@ class GuitarAmp:
         # Prevent digital clipping
         return np.clip(audio, -1.0, 1.0).astype(np.float32)
 
-# -----------------------------
-# REAL-TIME AUDIO THREAD
-# -----------------------------
+# Real-Time Audio Thread
 
 def audio_loop(amp, stop_event):
     capture = alsaaudio.PCM(
@@ -213,7 +205,7 @@ def audio_loop(amp, stop_event):
             samples = np.frombuffer(data, dtype=np.int16).reshape(-1, CHANNELS)
             samples = samples.astype(np.float32) / 32768.0
 
-            guitar = samples[:, 1]  # Scarlett Solo instrument input
+            guitar = samples[:, 1]  # Audio Interface instrument input
             processed = amp.process(guitar)
 
             stereo = np.column_stack((processed, processed))
@@ -223,9 +215,7 @@ def audio_loop(amp, stop_event):
         capture.close()
         playback.close()
 
-# -----------------------------
-# GUI
-# -----------------------------
+# UI Creation
 
 def build_gui(amp, on_close):
     root = tk.Tk()
@@ -273,7 +263,7 @@ def build_gui(amp, on_close):
     def set_od_tone(v): amp.od_tone = v
     def set_od_level(v): amp.od_level = v
 
-    # Row 0: amp and EQ
+    # Row 0: Amp and EQ
     add_slider("Gain", 0.0, 5.0, 0.05, amp.input_gain, set_gain, 0, 0)
     add_slider("Distortion", 0.0, 1.0, 0.01, amp.distortion, set_dist, 0, 1)
     add_slider("Bass (dB)", -12, 12, 0.5, amp.bass_db, set_bass, 0, 2)
@@ -312,15 +302,13 @@ def build_gui(amp, on_close):
 
     return root
 
-# -----------------------------
-# MAIN
-# -----------------------------
+# Main()
 
 def main():
     amp = GuitarAmp()
     stop_event = threading.Event()
 
-    print("Opening Scarlett Solo...")
+    print("Opening Audio Interface...")
     thread = threading.Thread(target=audio_loop, args=(amp, stop_event), daemon=True)
     thread.start()
 
