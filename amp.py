@@ -217,7 +217,7 @@ def audio_loop(amp, stop_event):
 
 # UI Creation
 
-def build_gui(amp, on_close):
+def build_ui(amp, on_close):
     root = tk.Tk()
     root.title("Guitar Amp")
     root.protocol("WM_DELETE_WINDOW", on_close)
@@ -317,7 +317,7 @@ def main():
         thread.join(timeout=2)
         root.destroy()
 
-    root = build_gui(amp, on_close)
+    root = build_ui(amp, on_close)
     print("Amplifier running. Close the window to stop.")
     root.mainloop()
 
